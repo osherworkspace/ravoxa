@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AppShell, type NavigationTab } from './layouts/AppShell';
 import HomePage from './pages/Home/HomePage';
+import WalletPage from './pages/Wallet/WalletPage';
 
 function App() {
   const [activeTab, setActiveTab] =
@@ -12,7 +13,7 @@ function App() {
         return <HomePage />;
 
       case 'wallet':
-        return <PlaceholderPage title="Wallet" />;
+          return <WalletPage />;
 
       case 'plan':
         return <PlaceholderPage title="Plan" />;
