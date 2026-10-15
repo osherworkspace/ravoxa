@@ -2,18 +2,20 @@ import { useState } from 'react';
 import { AppShell, type NavigationTab } from './layouts/AppShell';
 import HomePage from './pages/Home/HomePage';
 import WalletPage from './pages/Wallet/WalletPage';
+import ReceivePage from './pages/Receive/ReceivePage';
 
 function App() {
   const [activeTab, setActiveTab] =
     useState<NavigationTab>('home');
+  const [receiveOpen, setReceiveOpen] = useState(false);
 
   const renderPage = () => {
     switch (activeTab) {
       case 'home':
-        return <HomePage />;
+        return <HomePage onReceive={() => setReceiveOpen(true)} />;
 
       case 'wallet':
-          return <WalletPage />;
+          return <WalletPage onReceive={() => setReceiveOpen(true)} />;
 
       case 'plan':
         return <PlaceholderPage title="Plan" />;
@@ -25,16 +27,23 @@ function App() {
         return <PlaceholderPage title="Profile" />;
 
       default:
-        return <HomePage />;
+        return <HomePage onReceive={() => setReceiveOpen(true)} />;
     }
   };
 
   return (
     <AppShell
       activeTab={activeTab}
-      onNavigate={setActiveTab}
+      onNavigate={(tab) => {
+        setActiveTab(tab);
+        setReceiveOpen(false);
+      }}
     >
-      {renderPage()}
+      {receiveOpen ? (
+        <ReceivePage onBack={() => setReceiveOpen(false)} />
+      ) : (
+        renderPage()
+      )}
     </AppShell>
   );
 }

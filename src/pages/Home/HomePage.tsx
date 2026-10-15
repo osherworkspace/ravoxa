@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 
-function HomePage() {
+function HomePage({ onReceive }: { onReceive: () => void }) {
   const [balanceVisible, setBalanceVisible] = useState(true);
 
   const balance = balanceVisible ? '₦0.00' : '₦••••••';
@@ -123,6 +123,7 @@ function HomePage() {
           <QuickAction
             icon={<ArrowDownToLine size={20} />}
             label="Receive"
+            onClick={onReceive}
           />
 
           <QuickAction
@@ -284,16 +285,19 @@ function HomePage() {
 interface QuickActionProps {
   icon: ReactNode;
   label: string;
+  onClick?: () => void;
 }
 
 function QuickAction({
   icon,
   label,
+  onClick,
 }: QuickActionProps) {
   return (
     <button
       type="button"
       className="quick-action"
+      onClick={onClick}
     >
       <span className="quick-action-icon">
         {icon}
