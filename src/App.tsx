@@ -3,19 +3,21 @@ import { AppShell, type NavigationTab } from './layouts/AppShell';
 import HomePage from './pages/Home/HomePage';
 import WalletPage from './pages/Wallet/WalletPage';
 import ReceivePage from './pages/Receive/ReceivePage';
+import SendPage from './pages/Send/SendPage';
 
 function App() {
   const [activeTab, setActiveTab] =
     useState<NavigationTab>('home');
   const [receiveOpen, setReceiveOpen] = useState(false);
+  const [sendOpen, setSendOpen] = useState(false);
 
   const renderPage = () => {
     switch (activeTab) {
       case 'home':
-        return <HomePage onReceive={() => setReceiveOpen(true)} />;
+        return <HomePage onReceive={() => setReceiveOpen(true)} onSend={() => setSendOpen(true)} />;
 
       case 'wallet':
-          return <WalletPage onReceive={() => setReceiveOpen(true)} />;
+          return <WalletPage onReceive={() => setReceiveOpen(true)} onSend={() => setSendOpen(true)} />;
 
       case 'plan':
         return <PlaceholderPage title="Plan" />;
@@ -27,7 +29,7 @@ function App() {
         return <PlaceholderPage title="Profile" />;
 
       default:
-        return <HomePage onReceive={() => setReceiveOpen(true)} />;
+        return <HomePage onReceive={() => setReceiveOpen(true)} onSend={() => setSendOpen(true)} />;
     }
   };
 
@@ -37,10 +39,13 @@ function App() {
       onNavigate={(tab) => {
         setActiveTab(tab);
         setReceiveOpen(false);
+        setSendOpen(false);
       }}
     >
       {receiveOpen ? (
         <ReceivePage onBack={() => setReceiveOpen(false)} />
+      ) : sendOpen ? (
+        <SendPage onBack={() => setSendOpen(false)} />
       ) : (
         renderPage()
       )}

@@ -1,0 +1,191 @@
+
+.send-page {
+  min-height: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 24px 20px 115px;
+  color: var(--ravoxa-midnight);
+  background: linear-gradient(180deg, #f5f3ff 0%, #ffffff 55%);
+}
+
+.send-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.send-back,
+.send-header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 15px;
+  flex-shrink: 0;
+}
+
+.send-back {
+  border: 1px solid #e8e5ff;
+  background: #ffffff;
+  color: var(--ravoxa-midnight);
+  cursor: pointer;
+}
+
+.send-header-icon {
+  background: #eae7ff;
+  color: var(--ravoxa-violet);
+}
+
+.send-header-title {
+  flex: 1;
+}
+
+.send-header-title span {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--ravoxa-violet);
+}
+
+.send-header-title h1 {
+  margin: 4px 0 0;
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.send-intro {
+  margin: 19px 0 25px;
+  color: var(--ravoxa-gray-dark);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+
+/* SEND TRANSFER CARD */
+
+.send-card {
+  padding: 25px 20px;
+  border: 1px solid #eeebff;
+  border-radius: 26px;
+  background: #ffffff;
+  box-shadow: 0 14px 45px rgba(109, 93, 251, 0.09);
+}
+
+.send-card h2 {
+  margin: 0 0 25px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--ravoxa-midnight);
+}
+
+/* INPUT LABELS */
+
+.send-card label {
+  display: block;
+  margin: 20px 0 9px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ravoxa-midnight);
+}
+
+/* RECIPIENT AND AMOUNT INPUTS */
+
+.send-card input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 54px;
+  box-sizing: border-box;
+  padding: 14px 15px;
+  border: 1px solid #e5e3f4;
+  border-radius: 15px;
+  background: #f9f8ff;
+  color: var(--ravoxa-midnight);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.send-card input:focus {
+  border-color: var(--ravoxa-violet);
+  box-shadow: 0 0 0 3px rgba(109, 93, 251, 0.12);
+}
+
+.send-card input::placeholder {
+  color: #a1a1aa;
+}
+
+/* TESTNET INFORMATION */
+
+.send-card > p {
+  margin: 22px 0 0;
+  padding: 13px;
+  border-radius: 12px;
+  background: #f0edff;
+  color: #5948d9;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+@media (max-width: 360px) {
+  .send-page {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .send-card {
+    padding: 22px 14px;
+  }
+}
+
+
+/* SEND FORM VALIDATION */
+
+.send-error {
+  display: block;
+  margin-top: 9px;
+  color: #DC2626;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* AVAILABLE CELO BALANCE */
+
+.send-balance-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  font-size: 13px;
+}
+
+.send-balance-info span {
+  color: var(--ravoxa-gray-dark);
+}
+
+.send-balance-info strong {
+  color: var(--ravoxa-violet);
+  font-weight: 700;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* SUCCESSFUL PRELIMINARY VALIDATION */
+
+.send-validation-success {
+  margin-top: 18px;
+  padding: 13px;
+  border-radius: 12px;
+  background: #ecfdf5;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+}

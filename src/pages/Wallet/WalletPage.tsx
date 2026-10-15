@@ -20,7 +20,7 @@ import {
   icon: string;
 };
 
-function WalletPage({ onReceive }: { onReceive: () => void }) {
+function WalletPage({ onReceive, onSend }: { onReceive: () => void; onSend: () => void }) {
   const [balanceVisible, setBalanceVisible] = useState(true);
   const { isConnected, isCeloSepolia, balance, isLoading, error } = useCeloBalance();
   const celoAmount = balance ? Number(formatUnits(balance.value, balance.decimals)) : 0;
@@ -81,6 +81,7 @@ function WalletPage({ onReceive }: { onReceive: () => void }) {
                                                                                                                                                                                                                                                                                                                                                                                                                                                               <WalletAction
                                                                                                                                                                                                                                                                                                                                                                                                                                                                         icon={<ArrowUpFromLine size={19} />}
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   label="Send"
+        onClick={onSend}
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           />
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   <WalletAction
