@@ -22,15 +22,21 @@ interface SendPageProps {
 export default function SendPage({ onBack }: SendPageProps) {
   const { address, isConnected, chainId } = useAccount();
 
-  const {
-    balance: celoBalance,
-    isLoading: balanceLoading,
-    error: balanceError,
-  } = useCeloBalance();
+
+const {
+  balance: celoBalance,
+  isLoading: balanceLoading,
+  error: balanceError,
+  refetchBalance,
+} = useCeloBalance();
+
 
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [checkingTransfer, setCheckingTransfer] = useState(false);
+  const [verificationMessage, setVerificationMessage] = useState('');
+  const [verificationPassed, setVerificationPassed] = useState(false);
 
   // NETWORK VALIDATION
   const isTestnet = chainId === 11142220;
@@ -76,12 +82,15 @@ export default function SendPage({ onBack }: SendPageProps) {
     amountValid;
 
   // NETWORK FEE ESTIMATION
-  const {
-    estimatedFeeWei,
-    isLoading: feeLoading,
-    isError: feeError,
-    isReady: feeQueryReady,
-  } = useSendFeeEstimate({
+
+const {
+  estimatedFeeWei,
+  isLoading: feeLoading,
+  isError: feeError,
+  isReady: feeQueryReady,
+  refetchGas,
+  refetchFees,
+} = useSendFeeEstimate({
     from: address,
     to: recipientAddress,
     value: requestedAmountWei,
@@ -138,6 +147,80 @@ export default function SendPage({ onBack }: SendPageProps) {
     !insufficientBalance &&
     feeAvailable &&
     !insufficientBalanceWithFee;
+
+async function verifyTransfer() {
+  if (checkingTransfer) return;
+
+  setCheckingTransfer(true);
+  setVerificationMessage('');
+  setVerificationPassed(false);
+
+  try {
+    if (
+      !isConnected ||
+      !address ||
+      chainId !== 11142220 ||
+      !recipientValid ||
+      isOwnAddress ||
+      !amountValid ||
+      requestedAmountWei <= 0n
+    ) {
+      throw new Error('Invalid transfer details or network.');
+    }
+
+    const [balanceResult, gasResult, feesResult] =
+      await Promise.all([
+        refetchBalance(),
+        refetchGas(),
+        refetchFees(),
+      ]);
+
+    if (
+      balanceResult.isError ||
+      gasResult.isError ||
+      feesResult.isError
+    ) {
+      throw new Error('Unable to refresh transaction information.');
+    }
+
+    const freshBalance = balanceResult.data;
+    const freshGas = gasResult.data;
+    const freshFees = feesResult.data;
+
+    const feePerGas =
+      freshFees?.maxFeePerGas ?? freshFees?.gasPrice;
+
+    if (
+      !freshBalance ||
+      freshGas === undefined ||
+      feePerGas === undefined
+    ) {
+      throw new Error('Fresh balance or fee data is unavailable.');
+    }
+
+    const freshFeeBudget = freshGas * feePerGas;
+    const freshTotal = requestedAmountWei + freshFeeBudget;
+
+    if (freshTotal > freshBalance.value) {
+      throw new Error(
+        'Insufficient CELO for the transfer and network fee.'
+      );
+    }
+
+    setVerificationPassed(true);
+    setVerificationMessage(
+      'Latest balance and network fee checks passed. No CELO has been sent.'
+    );
+  } catch (error) {
+    setVerificationMessage(
+      error instanceof Error
+        ? error.message
+        : 'Transfer verification failed.'
+    );
+  } finally {
+    setCheckingTransfer(false);
+  }
+}
 
   return (
     <div className="send-page">
@@ -253,6 +336,35 @@ export default function SendPage({ onBack }: SendPageProps) {
           >
             Edit Transfer
           </button>
+
+<button
+  type="button"
+  className="receive-copy-button"
+  disabled={checkingTransfer}
+  onClick={verifyTransfer}
+>
+  {checkingTransfer
+    ? 'Checking Balance & Fee...'
+    : 'Verify Transfer'}
+</button>
+
+{verificationMessage && (
+  <div
+    role="status"
+    style={{
+      marginTop: '14px',
+      padding: '12px',
+      borderRadius: '12px',
+      background: verificationPassed ? '#ECFDF5' : '#FEF2F2',
+      color: verificationPassed ? '#166534' : '#DC2626',
+      fontSize: '13px',
+      lineHeight: 1.6,
+    }}
+  >
+    {verificationMessage}
+  </div>
+)}
+
 
         </section>
 

@@ -56,6 +56,8 @@ export function useSendFeeEstimate({
   return {
     estimatedFeeWei,
     gasLimit: gas.data,
+    refetchGas: gas.refetch,
+    refetchFees: fees.refetch,
     isLoading:
       ready &&
       (gas.isPending || fees.isPending),

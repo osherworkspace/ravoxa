@@ -17,5 +17,6 @@ export function useCeloBalance() {
     balance: balance.data,
     isLoading: balance.isLoading,
     error: balance.error,
+    refetchBalance: balance.refetch,
   };
 }
