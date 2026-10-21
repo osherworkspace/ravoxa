@@ -12,6 +12,7 @@ import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { useCeloBalance } from '../../hooks/useCeloBalance';
 import { useSendFeeEstimate } from '../../hooks/useSendFeeEstimate';
 import { useCeloSendTransaction } from '../../hooks/useCeloSendTransaction';
+import UsdMSendPanel from './UsdMSendPanel';
 import './SendPage.css';
 
 const TESTNET_CHAIN_ID = 11142220;
@@ -62,6 +63,8 @@ export default function SendPage({ onBack }: SendPageProps) {
     error: transactionError,
   } = useCeloSendTransaction();
 
+  // Asset is chosen once per Send screen to avoid switching mid-transaction.
+  const [selectedAsset, setSelectedAsset] = useState<'CELO' | 'USDm' | null>(null);
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
   const [reviewOpen, setReviewOpen] = useState(false);
@@ -313,6 +316,54 @@ export default function SendPage({ onBack }: SendPageProps) {
     setVerificationMessage('');
     setSubmissionError('');
     setSubmissionMessage('');
+  }
+
+  if (selectedAsset === null) {
+    return (
+      <div className="send-page">
+        <header className="send-header">
+          <button type="button" className="send-back" onClick={onBack} aria-label="Go back">
+            <ArrowLeft size={22} />
+          </button>
+          <div className="send-header-title">
+            <span>RAVOXA WALLET</span>
+            <h1>Choose an asset</h1>
+          </div>
+          <div className="send-header-icon"><ArrowUpRight size={22} /></div>
+        </header>
+        <section className="send-card">
+          <h2>What would you like to send?</h2>
+          <p>Celo Sepolia Testnet · No real-money value</p>
+          <button type="button" className="receive-copy-button"
+            onClick={() => setSelectedAsset('CELO')}>
+            Send CELO
+          </button>
+          <button type="button" className="receive-copy-button"
+            onClick={() => setSelectedAsset('USDm')}>
+            Send USDm
+          </button>
+          <p>Select an asset to continue. To choose another asset, return to the Wallet and open Send again.</p>
+        </section>
+      </div>
+    );
+  }
+
+  if (selectedAsset === 'USDm') {
+    return (
+      <div className="send-page">
+        <header className="send-header">
+          <button type="button" className="send-back" onClick={onBack} aria-label="Go back">
+            <ArrowLeft size={22} />
+          </button>
+          <div className="send-header-title">
+            <span>RAVOXA WALLET</span>
+            <h1>Send USDm</h1>
+          </div>
+          <div className="send-header-icon"><ArrowUpRight size={22} /></div>
+        </header>
+        <UsdMSendPanel />
+      </div>
+    );
   }
 
   return (
