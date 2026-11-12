@@ -13,12 +13,23 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
+import { formatUnits } from 'viem';
+import { useCeloBalance } from '../../hooks/useCeloBalance';
+import { useUsdMBalance } from '../../hooks/useUsdMBalance';
+import { useUsdcBalance } from '../../hooks/useUsdcBalance';
 
-function HomePage({ onReceive, onSend }: { onReceive: () => void; onSend: () => void }) {
+function HomePage({ onReceive, onSend, onRequest, onSwap, onPlan }: { onReceive: () => void; onSend: () => void; onRequest: () => void; onSwap: () => void; onPlan: () => void }) {
   const [balanceVisible, setBalanceVisible] = useState(true);
 
-  const balance = balanceVisible ? '₦0.00' : '₦••••••';
-  const usdBalance = balanceVisible ? '≈ $0.00' : '≈ $••••';
+  const { balance: celoBalance, isConnected, isCeloSepolia } = useCeloBalance();
+  const usdm = useUsdMBalance();
+  const usdc = useUsdcBalance();
+  const supported = isConnected && isCeloSepolia;
+  const usdMText = !supported ? 'Connect testnet wallet' : usdm.isLoading ? 'Loading USDm…' : usdm.error || usdm.formattedBalance === null ? 'USDm unavailable' : usdm.formattedBalance + ' USDm';
+  const usdcText = !supported ? 'Celo Sepolia only' : usdc.isLoading ? 'Loading USDC…' : usdc.error || usdc.formattedBalance === null ? 'USDC unavailable' : usdc.formattedBalance + ' USDC';
+  const celoText = supported && celoBalance ? formatUnits(celoBalance.value, celoBalance.decimals) + ' CELO' : '—';
+  const balance = balanceVisible ? usdMText : '••••••';
+  const usdBalance = balanceVisible ? usdcText : '••••••';
 
   return (
     <div className="home-page">
@@ -36,7 +47,9 @@ function HomePage({ onReceive, onSend }: { onReceive: () => void; onSend: () => 
           <button
             type="button"
             className="icon-button"
-            aria-label="Notifications"
+            aria-label="Notifications not yet enabled"
+            disabled
+            title="Notifications coming soon"
           >
             <Bell size={19} strokeWidth={2} />
           </button>
@@ -46,7 +59,7 @@ function HomePage({ onReceive, onSend }: { onReceive: () => void; onSend: () => 
       {/* BALANCE */}
       <section className="balance-card">
         <div className="balance-top">
-          <p className="balance-label">Total balance</p>
+          <p className="balance-label">USDm testnet balance</p>
 
           <button
             type="button"
@@ -73,11 +86,11 @@ function HomePage({ onReceive, onSend }: { onReceive: () => void; onSend: () => 
         <div className="balance-footer">
           <span className="balance-status">
             <span className="status-dot" />
-            Available balance
+            Celo Sepolia · Testnet
           </span>
 
           <span>
-            {balanceVisible ? '₦0.00' : '••••'}
+            {balanceVisible ? celoText : '••••'}
           </span>
         </div>
       </section>
@@ -91,11 +104,11 @@ function HomePage({ onReceive, onSend }: { onReceive: () => void; onSend: () => 
 
           <div>
             <p className="safe-spend-label">
-              Safe to spend
+              USDm available
             </p>
 
             <p className="safe-spend-value">
-              {balanceVisible ? '₦0.00' : '₦••••••'}
+              {balanceVisible ? usdMText : '••••••'}
             </p>
           </div>
         </div>
@@ -130,11 +143,13 @@ function HomePage({ onReceive, onSend }: { onReceive: () => void; onSend: () => 
           <QuickAction
             icon={<Plus size={20} />}
             label="Request"
+            onClick={onRequest}
           />
 
           <QuickAction
             icon={<Repeat2 size={20} />}
             label="Swap"
+            onClick={onSwap}
           />
         </div>
       </section>
@@ -163,7 +178,7 @@ function HomePage({ onReceive, onSend }: { onReceive: () => void; onSend: () => 
             </p>
 
             <p className="snapshot-value">
-              {balanceVisible ? '₦0' : '₦•••'}
+              {balanceVisible ? 'Not tracked' : '••••'}
             </p>
           </div>
 
@@ -177,7 +192,7 @@ function HomePage({ onReceive, onSend }: { onReceive: () => void; onSend: () => 
             </p>
 
             <p className="snapshot-value">
-              {balanceVisible ? '₦0' : '₦•••'}
+              {balanceVisible ? 'Not tracked' : '••••'}
             </p>
           </div>
 
@@ -214,6 +229,7 @@ function HomePage({ onReceive, onSend }: { onReceive: () => void; onSend: () => 
           <button
             type="button"
             className="primary-button"
+            onClick={onPlan}
           >
             Create a goal
           </button>
@@ -268,12 +284,12 @@ function HomePage({ onReceive, onSend }: { onReceive: () => void; onSend: () => 
           </div>
 
           <h3 className="empty-activity-title">
-            No transactions yet
+            Activity history not connected yet
           </h3>
 
           <p className="empty-activity-text">
-            Your financial story starts with
-            your first transaction.
+            To see your actual testnet transactions, open your public
+            wallet address in the Celo Sepolia explorer via Profile.
           </p>
 
         </div>
