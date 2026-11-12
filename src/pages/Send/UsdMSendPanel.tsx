@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAccount } from 'wagmi';
 import {
   formatEther,
@@ -91,6 +91,7 @@ export default function UsdMSendPanel() {
   const [verified, setVerified] = useState<TransferSnapshot | null>(null);
   const [verificationMessage, setVerificationMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [submissionLocked, setSubmissionLocked] = useState(false);
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [submissionError, setSubmissionError] = useState('');
   const [submittedHash, setSubmittedHash] = useState<Hash | undefined>();
@@ -98,7 +99,9 @@ export default function UsdMSendPanel() {
   const verificationLock = useRef(false);
   const submissionLock = useRef(false);
   const latest = useRef({ address, chainId, recipient, amount });
-  latest.current = { address, chainId, recipient, amount };
+  useEffect(() => {
+    latest.current = { address, chainId, recipient, amount };
+  }, [address, chainId, recipient, amount]);
 
   const onTestnet = chainId === TESTNET_CHAIN_ID;
   const recipientValid = isAddress(recipient.trim());
@@ -258,6 +261,7 @@ export default function UsdMSendPanel() {
     ) return;
 
     submissionLock.current = true;
+    setSubmissionLocked(true);
     setSubmitting(true);
     setSubmissionError('');
     setSubmissionMessage('Refreshing USDm balance and network fee...');
@@ -280,7 +284,10 @@ export default function UsdMSendPanel() {
       console.error('RAVOXA USDm wallet request:', error);
       setSubmissionMessage('');
       const rejected = isRejected(error);
-      if (!walletRequestStarted || rejected) submissionLock.current = false;
+      if (!walletRequestStarted || rejected) {
+        submissionLock.current = false;
+        setSubmissionLocked(false);
+      }
       setSubmissionError(
         rejected
           ? 'Wallet approval was cancelled or rejected.'
@@ -351,7 +358,7 @@ export default function UsdMSendPanel() {
           </div>
           <p>Testnet only. The fee estimate assumes default CELO gas payment; MiniPay may use a different fee currency. No transfer starts until you confirm and approve it in MiniPay.</p>
           <button type="button" className="receive-copy-button"
-            disabled={verifying || submitting || isAwaitingWallet || submissionLock.current}
+            disabled={verifying || submitting || isAwaitingWallet || submissionLocked}
             onClick={verifyTransfer}>
             {verifying ? 'Refreshing balances and fee...' : 'Verify Transfer'}
           </button>
@@ -364,13 +371,13 @@ export default function UsdMSendPanel() {
           {submissionError && <small className="send-error" role="alert">{submissionError}</small>}
           {verificationPassed && (
             <button type="button" className="receive-copy-button"
-              disabled={verifying || submitting || isAwaitingWallet || submissionLock.current}
+              disabled={verifying || submitting || isAwaitingWallet || submissionLocked}
               onClick={confirmInMiniPay}>
               {submitting || isAwaitingWallet ? 'Waiting for MiniPay...' : 'Confirm in MiniPay'}
             </button>
           )}
           <button type="button" className="receive-copy-button"
-            disabled={submitting || isAwaitingWallet || submissionLock.current} onClick={editTransfer}>
+            disabled={submitting || isAwaitingWallet || submissionLocked} onClick={editTransfer}>
             Edit Transfer
           </button>
         </section>
