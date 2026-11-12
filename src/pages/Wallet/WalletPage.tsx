@@ -13,6 +13,7 @@ import {
 import WalletConnection from '../../components/WalletConnection';
 import { useCeloBalance } from '../../hooks/useCeloBalance';
 import { useUsdMBalance } from '../../hooks/useUsdMBalance';
+import { useUsdcBalance } from '../../hooks/useUsdcBalance';
 
 type Asset = {
   symbol: string;
@@ -44,6 +45,12 @@ function WalletPage({ onReceive, onSend }: WalletPageProps) {
     error: usdmError,
   } = useUsdMBalance();
 
+  const {
+    formattedBalance: usdcBalance,
+    isLoading: usdcLoading,
+    error: usdcError,
+  } = useUsdcBalance();
+
   const celoAmount = balance
     ? Number(formatUnits(balance.value, balance.decimals))
     : 0;
@@ -66,6 +73,7 @@ function WalletPage({ onReceive, onSend }: WalletPageProps) {
           type="button"
           className="wallet-qr-button"
           aria-label="Wallet QR code"
+          onClick={onReceive}
         >
           <QrCode size={20} />
         </button>
@@ -76,7 +84,7 @@ function WalletPage({ onReceive, onSend }: WalletPageProps) {
       {/* PORTFOLIO: EXISTING CELO DISPLAY */}
       <section className="wallet-portfolio-card">
         <div className="wallet-portfolio-top">
-          <span>Total portfolio</span>
+          <span>CELO balance</span>
           <button
             type="button"
             className="wallet-visibility"
@@ -88,7 +96,9 @@ function WalletPage({ onReceive, onSend }: WalletPageProps) {
         </div>
 
         <h2>
-          {!isConnected
+          {!balanceVisible
+            ? '••••••'
+            : !isConnected
             ? 'Connect wallet'
             : !isCeloSepolia
               ? 'Switch to Celo Sepolia'
@@ -108,8 +118,8 @@ function WalletPage({ onReceive, onSend }: WalletPageProps) {
         </p>
 
         <div className="wallet-portfolio-footer">
-          <span>Across your assets</span>
-          <span>{showAssets ? '2 assets · Testnet' : 'Testnet balance'}</span>
+          <span>Other assets appear below</span>
+          <span>{showAssets ? '3 assets · Testnet' : 'Testnet balance'}</span>
         </div>
       </section>
 
@@ -125,14 +135,14 @@ function WalletPage({ onReceive, onSend }: WalletPageProps) {
           label="Receive"
           onClick={onReceive}
         />
-        <WalletAction icon={<QrCode size={19} />} label="My QR" />
+        <WalletAction icon={<QrCode size={19} />} label="My QR" onClick={onReceive} />
       </section>
 
       {/* ASSETS */}
       <section className="wallet-section">
         <div className="wallet-section-header">
           <h2>Your assets</h2>
-          <span>{showAssets ? '2 assets' : '0 assets'}</span>
+          <span>{showAssets ? '3 assets' : '0 assets'}</span>
         </div>
 
         <div className="asset-list">
@@ -149,6 +159,112 @@ function WalletPage({ onReceive, onSend }: WalletPageProps) {
                       : `${usdmBalance} USDm`,
                   valueNgn: 'Testnet stablecoin · No real-money value',
                   icon: '$',
+                }}
+                balanceVisible={balanceVisible}
+              />
+
+              <AssetCard
+                asset={{
+                  symbol: 'USDC',
+                  name: 'Circle USDC (Celo Sepolia)',
+                  balance: usdcLoading
+                    ? 'Loading…'
+                    : usdcError || usdcBalance === null
+                      ? 'Unavailable'
+                      : usdcBalance + ' USDC',
+                  valueNgn: 'Testnet stablecoin · No real-money value',
+                  icon: '
+                  name: 'Celo Sepolia (Testnet)',
+                  balance: isLoading
+                    ? 'Loading…'
+                    : error
+                      ? 'Unavailable'
+                      : `${celoDisplay} CELO`,
+                  valueNgn: 'Testnet token · No real-money value',
+                  icon: 'C',
+                }}
+                balanceVisible={balanceVisible}
+              />
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* TRANSACTIONS */}
+      <section className="wallet-section">
+        <div className="wallet-section-header">
+          <h2>Transactions</h2>
+          <button type="button" className="wallet-filter-button" disabled title="Filtering coming soon">
+            <Filter size={15} />
+            Filter
+          </button>
+        </div>
+
+        <div className="wallet-search">
+          <Search size={17} />
+          <input
+            type="search"
+            placeholder="Transaction search not yet available"
+            aria-label="Search transactions"
+            disabled
+          />
+        </div>
+
+        <div className="wallet-empty-state">
+          <div className="wallet-empty-icon">
+            <WalletCards size={21} />
+          </div>
+          <h3>Activity history not connected yet</h3>
+          <p>
+            For verified testnet transactions, open your public wallet
+            address from Profile in the Celo Sepolia explorer.
+          </p>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+type WalletActionProps = {
+  icon: React.ReactNode;
+  label: string;
+  onClick?: () => void;
+};
+
+function WalletAction({ icon, label, onClick }: WalletActionProps) {
+  return (
+    <button type="button" className="wallet-action" onClick={onClick}>
+      <span className="wallet-action-icon">{icon}</span>
+      <span>{label}</span>
+    </button>
+  );
+}
+
+function AssetCard({
+  asset,
+  balanceVisible,
+}: {
+  asset: Asset;
+  balanceVisible: boolean;
+}) {
+  return (
+    <div className="asset-card">
+      <div className="asset-icon">{asset.icon}</div>
+      <div className="asset-main">
+        <strong>{asset.symbol}</strong>
+        <span>{asset.name}</span>
+      </div>
+      <div className="asset-balance">
+        <strong>{balanceVisible ? asset.balance : '••••'}</strong>
+        <span>{balanceVisible ? asset.valueNgn : '••••'}</span>
+      </div>
+      <ChevronRight size={17} className="asset-chevron" />
+    </div>
+  );
+}
+
+export default WalletPage;
+,
                 }}
                 balanceVisible={balanceVisible}
               />
