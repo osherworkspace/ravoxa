@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Target, Trash2, Plus } from 'lucide-react';
+import BudgetPanel from './BudgetPanel';
 
 type Goal = { id: string; name: string; target: number; currency: 'NGN' | 'USD' };
 const STORAGE_KEY = 'ravoxa.localGoals.v1';
@@ -77,6 +78,7 @@ export default function PlanPage() {
           </div>
         ))}
       </section>
+      <BudgetPanel />
       <p className="rv-disclaimer">Goals are stored locally in this browser. They may disappear if MiniPay clears its browser data, and they do not automatically transfer or safeguard funds.</p>
     </div>
   );
