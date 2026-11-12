@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAccount } from 'wagmi';
 import {
   formatEther,
@@ -72,6 +72,7 @@ export default function SendPage({ onBack }: SendPageProps) {
   const [verified, setVerified] = useState<VerifiedTransfer | null>(null);
   const [verificationMessage, setVerificationMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionLocked, setSubmissionLocked] = useState(false);
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [submissionError, setSubmissionError] = useState('');
   const [submittedHash, setSubmittedHash] = useState<Hash | undefined>();
@@ -80,7 +81,9 @@ export default function SendPage({ onBack }: SendPageProps) {
   const checkingLockRef = useRef(false);
   const submissionLockRef = useRef(false);
   const latestDetailsRef = useRef({ address, chainId, recipient, amount });
-  latestDetailsRef.current = { address, chainId, recipient, amount };
+  useEffect(() => {
+    latestDetailsRef.current = { address, chainId, recipient, amount };
+  }, [address, chainId, recipient, amount]);
 
   const isTestnet = chainId === TESTNET_CHAIN_ID;
   const recipientValid = isAddress(recipient.trim());
@@ -246,6 +249,7 @@ export default function SendPage({ onBack }: SendPageProps) {
       return;
     }
     submissionLockRef.current = true;
+    setSubmissionLocked(true);
     setIsSubmitting(true);
     setSubmissionError('');
     setSubmissionMessage('Refreshing balance and network fee...');
@@ -295,6 +299,7 @@ export default function SendPage({ onBack }: SendPageProps) {
       // duplicate submissions. Only unlock for pre-request errors or rejection.
       if (!walletRequestStarted || rejected) {
         submissionLockRef.current = false;
+        setSubmissionLocked(false);
       }
 
       setSubmissionError(
@@ -505,7 +510,7 @@ export default function SendPage({ onBack }: SendPageProps) {
             <button
               type="button"
               className="receive-copy-button"
-              disabled={checkingTransfer || isSubmitting || isAwaitingWallet || submissionLockRef.current}
+              disabled={checkingTransfer || isSubmitting || isAwaitingWallet || submissionLocked}
               onClick={confirmInMiniPay}
             >
               {isSubmitting || isAwaitingWallet
@@ -517,7 +522,7 @@ export default function SendPage({ onBack }: SendPageProps) {
           <button
             type="button"
             className="receive-copy-button"
-            disabled={isSubmitting || isAwaitingWallet || submissionLockRef.current}
+            disabled={isSubmitting || isAwaitingWallet || submissionLocked}
             onClick={editTransfer}
           >
             Edit Transfer
