@@ -26,3 +26,6 @@
 .rv-disclaimer{border-radius:16px;padding:16px;background:#f3f4f6;color:#4b5563;font-size:12px;line-height:1.65}
 .rv-swap-arrow{text-align:center;display:flex;align-items:center;justify-content:center;color:#6d5dfb}
 .rv-break{overflow-wrap:anywhere}
+
+.rv-progress{height:10px;overflow:hidden;border-radius:999px;background:#e5e7eb;margin:12px 0 0}
+.rv-progress>div{height:100%;background:#6d5dfb;border-radius:999px;transition:width .25s ease}
