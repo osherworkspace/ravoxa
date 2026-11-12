@@ -9,7 +9,7 @@ RAVOXA is a mobile-first financial planning and testnet wallet prototype for Min
 - CELO and USDm Send interfaces with review, validation and transaction receipt monitoring. **Live MiniPay authorization is not yet verified.**
 - Receive via QR or copied wallet address, plus a shareable testnet payment request.
 - USDC → USDm **read-only** quote from the Mento SDK. No approval or swap controls are enabled.
-- Simple savings-goal planner (data is stored only in this browser; no funds are deposited or locked).
+- Savings goals, manual monthly budgeting and spending insights (stored only in this browser; no funds are deposited or locked).
 - Wallet Profile page and explorer link.
 - Navigation state persisted in the same browser tab across page reloads when session storage is available.
 
