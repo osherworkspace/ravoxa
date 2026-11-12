@@ -1,0 +1,28 @@
+.rv-page{padding:24px 18px 38px;max-width:600px;margin:0 auto}
+.rv-page h1{font-size:28px;letter-spacing:-.045em;margin:6px 0 12px}
+.rv-eyebrow{color:#6d5dfb;font-size:11px;font-weight:800;letter-spacing:.14em}
+.rv-muted{color:#6b7280;font-size:14px;line-height:1.55}
+.rv-card{background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:20px;margin:18px 0;box-shadow:0 4px 16px rgba(17,24,39,.035)}
+.rv-card h2{font-size:20px;margin:0 0 16px;display:flex;align-items:center;gap:9px}
+.rv-card p:last-child{margin-bottom:0}
+.rv-form{display:flex;flex-direction:column;gap:12px}
+.rv-form label{font-weight:650;font-size:13px}
+.rv-form input,.rv-form select{width:100%;min-height:46px;border:1px solid #d7dbe6;border-radius:12px;padding:10px 12px;background:#f9fafb;color:#111827}
+.rv-primary{border:0;background:#6d5dfb;color:#fff;min-height:46px;padding:12px 18px;border-radius:13px;font-weight:750;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.rv-primary:disabled{opacity:.48;cursor:not-allowed}
+.rv-full{width:100%}
+.rv-back{display:inline-flex;align-items:center;gap:8px;background:transparent;color:#111827;padding:0 0 22px}
+.rv-list-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-top:1px solid #f0f1f5}
+.rv-list-row strong{display:block;font-size:15px;margin-bottom:4px}
+.rv-list-row span{display:block;color:#6b7280;font-size:12px}
+.rv-icon-button{display:grid;place-items:center;flex-shrink:0;border-radius:12px;width:40px;height:40px;background:#f3f4f6;color:#6b7280}
+.rv-field{padding:14px 0;border-bottom:1px solid #eef0f4;display:flex;flex-direction:column;gap:5px}
+.rv-field span{font-size:12px;color:#6b7280}
+.rv-field strong{font-size:14px}
+.rv-address{font-size:12px;line-height:1.65;overflow-wrap:anywhere}
+.rv-status{font-weight:750;color:#16a34a}
+.rv-link{display:inline-flex;gap:8px;align-items:center;margin-top:14px;color:#6d5dfb;font-weight:700;font-size:13px;overflow-wrap:anywhere}
+.rv-error{color:#b91c1c;font-size:13px;overflow-wrap:anywhere}
+.rv-disclaimer{border-radius:16px;padding:16px;background:#f3f4f6;color:#4b5563;font-size:12px;line-height:1.65}
+.rv-swap-arrow{text-align:center;display:flex;align-items:center;justify-content:center;color:#6d5dfb}
+.rv-break{overflow-wrap:anywhere}
